@@ -1,5 +1,3 @@
-use glium;
-
 #[derive(Copy, Clone)]
 pub struct Vertex {
     pub position: [f32; 2],
@@ -28,8 +26,10 @@ pub fn default_program(display: glium::Display) -> glium::Program {
 
         in vec2 position;
 
+        uniform mat4 matrix;
+
         void main() {
-            gl_Position = vec4(position, 0.0, 1.0);
+            gl_Position = matrix * vec4(position, 0.0, 1.0);
         }
     "#;
 

@@ -1,5 +1,6 @@
 #[macro_use]
 extern crate glium;
+extern crate nalgebra_glm as glm;
 
 use glium::glutin::{self, event_loop::EventLoop, window::WindowBuilder, ContextBuilder};
 use glium::Surface;
@@ -22,7 +23,17 @@ fn main() {
     let indices = glium::index::NoIndices(glium::index::PrimitiveType::TrianglesList);
     let program = default_program(display.clone());
 
+    let mut t = -0.5;
+
     event_loop.run(move |event, _, control_flow| {
+        t += 0.001;
+        if t > 0.5 {
+            t = -0.5;
+        }
+
+        let matrix = glm::translate(&glm::identity(), &glm::vec3(t, 0., 0.));
+        let matrix: [[f32; 4]; 4] = matrix.into();
+
         let mut target = display.draw();
         target.clear_color(0.6, 0.9, 0.9, 1.0); // Sky color
         target
@@ -30,7 +41,7 @@ fn main() {
                 &vertex_buffer,
                 &indices,
                 &program,
-                &glium::uniforms::EmptyUniforms,
+                &uniform! {matrix: matrix},
                 &Default::default(),
             )
             .unwrap();

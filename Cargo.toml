@@ -8,3 +8,4 @@ edition = "2018"
 
 [dependencies]
 glium = "0.29.1"
+nalgebra-glm = "0.12.0"
