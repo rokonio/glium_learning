@@ -14,13 +14,22 @@ fn main() {
     let context_builder = ContextBuilder::new().with_vsync(true);
     let display = glium::Display::new(window_builder, context_builder, &event_loop).unwrap();
 
-    let shape = Shape::from_vertices(vec![
-        Vertex::new([-0.5, -0.5]),
-        Vertex::new([0.0, 0.5]),
-        Vertex::new([0.5, -0.25]),
-    ]);
+    let shape = Shape::from_vertices(
+        vec![
+            Vertex::new([-0.5, -0.5, -1.]),
+            Vertex::new([0.0, 0.5, -1.]),
+            Vertex::new([0.5, -0.25, -1.]),
+        ],
+        vec![0, 1, 2],
+    );
     let vertex_buffer = glium::VertexBuffer::new(&display, &shape.vertices).unwrap();
-    let indices = glium::index::NoIndices(glium::index::PrimitiveType::TrianglesList);
+    let indices = glium::IndexBuffer::new(
+        &display,
+        glium::index::PrimitiveType::TrianglesList,
+        &shape.indices,
+    )
+    .unwrap();
+    // let indices = glium::index::NoIndices(glium::index::PrimitiveType::TrianglesList);
     let program = default_program(display.clone());
 
     let mut t = -0.5;

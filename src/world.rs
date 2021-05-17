@@ -1,22 +1,23 @@
 #[derive(Copy, Clone)]
 pub struct Vertex {
-    pub position: [f32; 2],
+    pub position: [f32; 3],
 }
 implement_vertex!(Vertex, position);
 
 impl Vertex {
-    pub fn new(position: [f32; 2]) -> Vertex {
+    pub fn new(position: [f32; 3]) -> Vertex {
         Vertex { position }
     }
 }
 
 pub struct Shape {
     pub vertices: Vec<Vertex>,
+    pub indices: Vec<u32>,
 }
 
 impl Shape {
-    pub fn from_vertices(vertices: Vec<Vertex>) -> Shape {
-        Shape { vertices }
+    pub fn from_vertices(vertices: Vec<Vertex>, indices: Vec<u32>) -> Shape {
+        Shape { vertices, indices }
     }
 }
 
@@ -24,12 +25,12 @@ pub fn default_program(display: glium::Display) -> glium::Program {
     let vertex_shader_src = r#"
         #version 140
 
-        in vec2 position;
+        in vec3 position;
 
         uniform mat4 matrix;
 
         void main() {
-            gl_Position = matrix * vec4(position, 0.0, 1.0);
+            gl_Position = matrix * vec4(position, 1.0);
         }
     "#;
 
