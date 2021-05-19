@@ -1,9 +1,12 @@
 #[macro_use]
 extern crate glium;
+extern crate image;
 extern crate nalgebra_glm as glm;
 
 use glium::glutin::{self, event_loop::EventLoop, window::WindowBuilder, ContextBuilder};
 use glium::Surface;
+
+use std::io::Cursor;
 
 mod world;
 use world::*;
@@ -14,13 +17,39 @@ fn main() {
     let context_builder = ContextBuilder::new().with_vsync(true);
     let display = glium::Display::new(window_builder, context_builder, &event_loop).unwrap();
 
+    let image = image::load(
+        Cursor::new(&include_bytes!("../assets/textures/minecraft_tex.png")),
+        image::ImageFormat::Png,
+    )
+    .unwrap()
+    .to_rgba8();
+    let image_dimensions = image.dimensions();
+    let image =
+        glium::texture::RawImage2d::from_raw_rgba_reversed(&image.into_raw(), image_dimensions);
+    let texture = glium::texture::Texture2d::new(&display, image).unwrap();
+
+    let width = 24f32;
+    let height = 42f32;
+
+    let block1 = (1f32, 41f32); // Stone
+
     let shape = Shape::from_vertices(
         vec![
-            Vertex::new([-0.5, -0.5, -1.]),
-            Vertex::new([0.0, 0.5, -1.]),
-            Vertex::new([0.5, -0.25, -1.]),
+            Vertex::new([-1.0, -0.5, -1.], [block1.0 / width, block1.1 / height]),
+            Vertex::new(
+                [-1.0, 0.5, -1.],
+                [block1.0 / width, (block1.1 + 1.) / height],
+            ),
+            Vertex::new(
+                [-0.5, 0.5, -1.],
+                [(block1.0 + 1.) / width, (block1.1 + 1.) / height],
+            ),
+            Vertex::new(
+                [-0.5, -0.5, -1.],
+                [(block1.0 + 1.) / width, block1.1 / height],
+            ),
         ],
-        vec![0, 1, 2],
+        vec![0, 1, 2, 0, 2, 3],
     );
     let vertex_buffer = glium::VertexBuffer::new(&display, &shape.vertices).unwrap();
     let indices = glium::IndexBuffer::new(
@@ -50,7 +79,8 @@ fn main() {
                 &vertex_buffer,
                 &indices,
                 &program,
-                &uniform! {matrix: matrix},
+                &uniform! {matrix: matrix, tex: glium::uniforms::Sampler::new(&texture)
+                .magnify_filter(glium::uniforms::MagnifySamplerFilter::Nearest)},
                 &Default::default(),
             )
             .unwrap();
