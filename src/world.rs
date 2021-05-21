@@ -39,6 +39,21 @@ impl Shape {
         self.indices
             .extend(indices.iter().map(|i| *i + index_base as u32));
     }
+
+    pub fn indices_and_vertices(
+        &self,
+        display: &glium::Display,
+    ) -> (glium::VertexBuffer<Vertex>, glium::IndexBuffer<u32>) {
+        (
+            glium::VertexBuffer::new(display, &self.vertices).unwrap(),
+            glium::IndexBuffer::new(
+                display,
+                glium::index::PrimitiveType::TrianglesList,
+                &self.indices,
+            )
+            .unwrap(),
+        )
+    }
 }
 
 pub fn default_program(display: glium::Display) -> glium::Program {
