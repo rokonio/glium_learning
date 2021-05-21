@@ -13,7 +13,7 @@ use world::*;
 fn main() {
     let event_loop = EventLoop::new();
     let window_builder = WindowBuilder::new().with_title("OpenGl in Rust");
-    let context_builder = ContextBuilder::new().with_vsync(true);
+    let context_builder = ContextBuilder::new().with_vsync(true).with_depth_buffer(24);
     let display = glium::Display::new(window_builder, context_builder, &event_loop).unwrap();
 
     let texture = setup::texture(
@@ -58,7 +58,7 @@ fn main() {
             let projection: [[f32; 4]; 4] = projection.into();
 
             let mut target = display.draw();
-            target.clear_color(0.6, 0.9, 0.9, 1.0); // Sky color
+            target.clear_color_and_depth((0.6, 0.9, 0.9, 1.0), 1.0); // Sky color
             target
                 .draw(
                     &vertex_buffer,
@@ -66,7 +66,7 @@ fn main() {
                     &program,
                     &uniform! {model: model, view: view, projection: projection, tex: glium::uniforms::Sampler::new(&texture)
                     .magnify_filter(glium::uniforms::MagnifySamplerFilter::Nearest)},
-                    &Default::default(),
+                    &default_draw_param(),
                 )
                 .unwrap();
             target.finish().unwrap();

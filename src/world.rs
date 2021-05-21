@@ -90,6 +90,17 @@ pub fn default_program(display: glium::Display) -> glium::Program {
     glium::Program::from_source(&display, vertex_shader_src, fragment_shader_src, None).unwrap()
 }
 
+pub fn default_draw_param() -> glium::DrawParameters<'static> {
+    glium::DrawParameters {
+        depth: glium::Depth {
+            test: glium::draw_parameters::DepthTest::IfLess,
+            write: true,
+            ..Default::default()
+        },
+        ..Default::default()
+    }
+}
+
 pub fn degree_to_radian(degree: f32) -> f32 {
     degree * (3.1415 / 180.)
 }
