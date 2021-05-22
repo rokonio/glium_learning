@@ -53,6 +53,9 @@ fn main() {
             }
         } else if let glutin::event::Event::MainEventsCleared = event {
             // Render code moved here
+
+            let mut target = display.draw();
+
             let model = glm::identity::<f32, 4>();
             let model: [[f32; 4]; 4] = model.into();
 
@@ -62,10 +65,12 @@ fn main() {
             let view = glm::translate(&view, &camera_pos);
             let view: [[f32; 4]; 4] = view.into();
 
-            let projection = glm::perspective(1., degree_to_radian(70.), 0.1, 1000.);
+            let (width, height) = target.get_dimensions();
+            let aspect_ratio = width as f32 / height as f32;
+
+            let projection = glm::perspective(aspect_ratio, degree_to_radian(70.), 0.1, 1000.);
             let projection: [[f32; 4]; 4] = projection.into();
 
-            let mut target = display.draw();
             target.clear_color_and_depth((0.6, 0.9, 0.9, 1.0), 1.0); // Sky color
             target
                 .draw(
