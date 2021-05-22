@@ -26,7 +26,8 @@ fn main() {
     let (vertex_buffer, indices) = shape.indices_and_vertices(&display);
     let program = default_program(display.clone());
 
-    let mut camera_pos = (0f32, 0f32, -1f32);
+    let mut camera_pos = glm::vec3(0f32, 0., 0.);
+    let mut camera_rot = glm::vec3(0f32, 0., 0.);
 
     event_loop.run(move |event, _, control_flow| {
 
@@ -36,14 +37,18 @@ fn main() {
             }
         } else if let glutin::event::Event::DeviceEvent { event, ..} = event {
             if let glutin::event::DeviceEvent::MouseMotion {delta} = event {
-               camera_pos.0 += delta.0 as f32 / 100.;
-                camera_pos.1 += delta.1 as f32 / 100.;
+               camera_rot.y += delta.0 as f32 / 100.;
+                camera_rot.x += delta.1 as f32 / 100.;
             }
             if let glutin::event::DeviceEvent::Key(input) = event {
-                camera_pos.2 += match input.scancode {
-                    17 => 0.1,  // 'z' on azerty
-                    31 => -0.1, // 's' on azerty 
-                    _ => 0.,
+                match input.scancode {
+                    17 => camera_pos.z += 0.1,  // 'z' on azerty
+                    31 => camera_pos.z -= 0.1, // 's' on azerty 
+                    42 => camera_pos.y += 0.1, // Shift
+                    57 => camera_pos.y -= 0.1, // Space
+                    32 => camera_pos.x -= 0.1, // D
+                    30 => camera_pos.x += 0.1, // Q
+                    _ => (),
                 }
             }
         } else if let glutin::event::Event::MainEventsCleared = event {
@@ -51,7 +56,10 @@ fn main() {
             let model = glm::identity::<f32, 4>();
             let model: [[f32; 4]; 4] = model.into();
 
-            let view = glm::translate(&glm::identity(), &glm::vec3(camera_pos.0, -camera_pos.1, camera_pos.2));
+            let view = glm::Mat4x4::identity();
+            let view = glm::rotate_x(&view, camera_rot.x);
+            let view = glm::rotate_y(&view, camera_rot.y);
+            let view = glm::translate(&view, &camera_pos);
             let view: [[f32; 4]; 4] = view.into();
 
             let projection = glm::perspective(1., degree_to_radian(70.), 0.1, 1000.);
