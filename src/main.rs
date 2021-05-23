@@ -61,15 +61,17 @@ fn main() {
                 camera_front = glm::normalize(&direction);
             }
             if let glutin::event::DeviceEvent::Key(input) = event {
+                let mut start_y_camera_pos = camera_pos.y;
                 match input.scancode {
                     17 => camera_pos += camera_speed * camera_front,  // 'z' on azerty
                     31 => camera_pos -= camera_speed * camera_front, // s 
-                    // 42 => camera_pos.y += 0.1, // Shift
-                    // 57 => camera_pos.y -= 0.1, // Space
+                    42 => start_y_camera_pos -= 0.1, // Shift
+                    57 => start_y_camera_pos += 0.1, // Space
                     32 => camera_pos += glm::normalize(&glm::cross(&camera_front, &camera_up)) * camera_speed, // d
                     30 => camera_pos -= glm::normalize(&glm::cross(&camera_front, &camera_up)) * camera_speed, // q
                     _ => (),
                 }
+                camera_pos.y = start_y_camera_pos;
             }
         } else if let glutin::event::Event::MainEventsCleared = event {
             // Render code moved here
