@@ -26,15 +26,14 @@ fn main() {
     let shape = setup::shapes();
 
     let (vertex_buffer, indices) = shape.indices_and_vertices(&display);
-    let program = default_program(display.clone());
+    let program = setup::program(display.clone());
 
     let mut camera = Camera::new(
-        0.2,
-        0.4,
-        glm::vec3(0., 1.8, 0.),
-        glm::vec3(0., 0., -1.),
-        0.,
-        -90.,
+        0.2,                    // Velocity
+        0.4,                    // Sensitivity
+        glm::vec3(0., 1.8, 0.), // Position
+        0.,                     // Head y-axis position
+        -90.,                   // Head x-axis position
     );
 
     event_loop.run(move |event, _, control_flow| {
@@ -85,7 +84,7 @@ fn main() {
                     &program,
                     &uniform! {model: model, view: view, projection: projection, tex: glium::uniforms::Sampler::new(&texture)
                     .magnify_filter(glium::uniforms::MagnifySamplerFilter::Nearest)},
-                    &default_draw_param(),
+                    &setup::draw_param(),
                 )
                 .unwrap();
             target.finish().unwrap();

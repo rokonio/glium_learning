@@ -60,52 +60,6 @@ impl Shape {
     }
 }
 
-pub fn default_program(display: glium::Display) -> glium::Program {
-    let vertex_shader_src = r#"
-        #version 140
-
-        in vec3 position;
-        in vec2 tex_coords;
-        out vec2 v_tex_coords;
-
-        uniform mat4 model;
-        uniform mat4 view;
-        uniform mat4 projection;
-
-        void main() {
-            v_tex_coords = tex_coords;
-            gl_Position = projection * view * model * vec4(position, 1.0);
-        }
-    "#;
-
-    let fragment_shader_src = r#"
-        #version 140
-
-        in vec2 v_tex_coords;
-        out vec4 color;
-
-        uniform sampler2D tex;
-
-        void main() {
-            color = texture(tex, v_tex_coords);
-        }
-    "#;
-
-    glium::Program::from_source(&display, vertex_shader_src, fragment_shader_src, None).unwrap()
-}
-
-pub fn default_draw_param() -> glium::DrawParameters<'static> {
-    glium::DrawParameters {
-        depth: glium::Depth {
-            test: glium::draw_parameters::DepthTest::IfLess,
-            write: true,
-            ..Default::default()
-        },
-        backface_culling: glium::draw_parameters::BackfaceCullingMode::CullClockwise,
-        ..Default::default()
-    }
-}
-
 pub fn degree_to_radian(degree: f32) -> f32 {
     degree * (3.1415 / 180.)
 }

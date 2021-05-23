@@ -36,7 +36,6 @@ impl Camera {
         velocity: f32,
         sensitivity: f32,
         camera_pos: glm::Vec3,
-        camera_front: glm::Vec3,
         pitch: f32,
         yaw: f32,
     ) -> Camera {
@@ -44,7 +43,7 @@ impl Camera {
             velocity,
             sensitivity,
             camera_pos,
-            camera_front,
+            camera_front: glm::vec3(0., 0., -1.),
             pitch,
             yaw,
         }
