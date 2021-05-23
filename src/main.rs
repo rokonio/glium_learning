@@ -48,6 +48,8 @@ fn main() {
                     57 => camera.move_up(), // Space
                     32 => camera.move_right(), // d
                     30 => camera.move_left(), // q
+
+                    1 => *control_flow = glutin::event_loop::ControlFlow::Exit, // escape
                     _ => (),
                 }
             }
