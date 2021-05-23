@@ -40,6 +40,10 @@ impl Shape {
             .extend(indices.iter().map(|i| *i + index_base as u32));
     }
 
+    pub fn add_shape(&mut self, shape: Shape) {
+        self.add_vertices(shape.vertices, shape.indices);
+    }
+
     pub fn indices_and_vertices(
         &self,
         display: &glium::Display,
@@ -97,6 +101,7 @@ pub fn default_draw_param() -> glium::DrawParameters<'static> {
             write: true,
             ..Default::default()
         },
+        backface_culling: glium::draw_parameters::BackfaceCullingMode::CullClockwise,
         ..Default::default()
     }
 }

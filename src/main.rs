@@ -28,7 +28,14 @@ fn main() {
     let (vertex_buffer, indices) = shape.indices_and_vertices(&display);
     let program = default_program(display.clone());
 
-    let mut camera = Camera::new_centered(0.05, 0.2);
+    let mut camera = Camera::new(
+        0.2,
+        0.4,
+        glm::vec3(0., 1.8, 0.),
+        glm::vec3(0., 0., -1.),
+        0.,
+        -90.,
+    );
 
     event_loop.run(move |event, _, control_flow| {
 
