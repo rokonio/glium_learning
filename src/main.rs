@@ -6,8 +6,10 @@ extern crate nalgebra_glm as glm;
 use glium::glutin::{self, event_loop::EventLoop, window::WindowBuilder, ContextBuilder};
 use glium::Surface;
 
+mod camera;
 mod setup;
 mod world;
+use camera::*;
 use world::*;
 
 fn main() {
@@ -26,15 +28,7 @@ fn main() {
     let (vertex_buffer, indices) = shape.indices_and_vertices(&display);
     let program = default_program(display.clone());
 
-    let mut camera_pos = glm::vec3(0f32, 0., 0.);
-    let mut camera_front = glm::vec3(0f32, 0., -1.);
-    let camera_up = glm::vec3(0f32, 1., 0.);
-
-    let camera_speed = 0.05f32;
-    let sensitivity = 0.2f32;
-
-    let mut pitch = 0f32;
-    let mut yaw = -90f32;
+    let mut camera = Camera::new_centered(0.05, 0.2);
 
     event_loop.run(move |event, _, control_flow| {
 
@@ -44,34 +38,18 @@ fn main() {
             }
         } else if let glutin::event::Event::DeviceEvent { event, ..} = event {
             if let glutin::event::DeviceEvent::MouseMotion {delta} = event {
-                yaw += sensitivity * delta.0 as f32;
-                pitch -= sensitivity * delta.1 as f32;
-
-                if pitch > 89. {
-                    pitch = 89.;
-                }
-                if pitch < -89. {
-                    pitch = -89.;
-                }
-
-                let mut direction = glm::vec3(0f32, 0., 0.);
-                direction.x = degree_to_radian(yaw).cos() * degree_to_radian(pitch).cos();
-                direction.y = degree_to_radian(pitch).sin();
-                direction.z = degree_to_radian(yaw).sin() * degree_to_radian(pitch).cos();
-                camera_front = glm::normalize(&direction);
+                camera.turn((delta.0 as f32, delta.1 as f32));
             }
             if let glutin::event::DeviceEvent::Key(input) = event {
-                let mut start_y_camera_pos = camera_pos.y;
                 match input.scancode {
-                    17 => camera_pos += camera_speed * camera_front,  // 'z' on azerty
-                    31 => camera_pos -= camera_speed * camera_front, // s 
-                    42 => start_y_camera_pos -= 0.1, // Shift
-                    57 => start_y_camera_pos += 0.1, // Space
-                    32 => camera_pos += glm::normalize(&glm::cross(&camera_front, &camera_up)) * camera_speed, // d
-                    30 => camera_pos -= glm::normalize(&glm::cross(&camera_front, &camera_up)) * camera_speed, // q
+                    17 => camera.move_front(),  // 'z' on azerty
+                    31 => camera.move_back(), // s 
+                    42 => camera.move_down(), // Shift
+                    57 => camera.move_up(), // Space
+                    32 => camera.move_right(), // d
+                    30 => camera.move_left(), // q
                     _ => (),
                 }
-                camera_pos.y = start_y_camera_pos;
             }
         } else if let glutin::event::Event::MainEventsCleared = event {
             // Render code moved here
@@ -81,7 +59,7 @@ fn main() {
             let model = glm::identity::<f32, 4>();
             let model: [[f32; 4]; 4] = model.into();
 
-            let view = glm::look_at(&camera_pos, &(camera_pos + camera_front), &camera_up);
+            let view = glm::look_at(&camera.camera_pos, &(camera.camera_pos + camera.camera_front), &glm::vec3(0f32, 1., 0.));
             let view: [[f32; 4]; 4] = view.into();
 
             let (width, height) = target.get_dimensions();
