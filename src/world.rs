@@ -1,7 +1,5 @@
 use super::Camera;
 
-use std::time::Instant;
-
 #[derive(Copy, Clone, Debug)]
 pub struct Vertex {
     pub position: [f32; 3],
@@ -40,7 +38,7 @@ impl Shape {
         Shape { vertices, indices }
     }
 
-    pub fn new() -> Shape {
+    pub fn empty() -> Shape {
         Shape {
             vertices: vec![],
             indices: vec![],
@@ -73,23 +71,13 @@ impl World {
     ) -> (glium::VertexBuffer<Vertex>, glium::IndexBuffer<u32>) {
         let mut vertices: Vec<_>;
         let mut indices: Vec<_>;
-        let mut now = Instant::now();
-        if let (Some(v), Some(i)) = (self.vertices.as_ref(), self.indices.as_ref()) {
-            let foo = glium::VertexBuffer::new(display, &v).unwrap();
-            println!(
-                "VertexBuffer (no computation) {}ms",
-                now.elapsed().as_millis()
-            );
-            now = Instant::now();
-            let foo2 =
-                glium::IndexBuffer::new(display, glium::index::PrimitiveType::TrianglesList, &i)
-                    .unwrap();
-            println!(
-                "IndexBuffer (no computation) {}ms\n",
-                now.elapsed().as_millis()
-            );
 
-            return (foo, foo2);
+        if let (Some(v), Some(i)) = (self.vertices.as_ref(), self.indices.as_ref()) {
+            return (
+                glium::VertexBuffer::new(display, &v).unwrap(),
+                glium::IndexBuffer::new(display, glium::index::PrimitiveType::TrianglesList, &i)
+                    .unwrap(),
+            );
         } else {
             vertices = Vec::with_capacity(
                 self.shapes
@@ -103,9 +91,7 @@ impl World {
                     .map(|shape| shape.indices.len())
                     .sum::<usize>(),
             );
-            println!("Init vectors {}ms", now.elapsed().as_millis());
-            now = Instant::now();
-            // let mut index_indices = 0;
+
             for shape in &self.shapes {
                 indices.extend(
                     shape
@@ -117,29 +103,24 @@ impl World {
             }
             self.vertices = Some(vertices.to_vec());
             self.indices = Some(indices.to_vec());
-            println!("Fill vectors {}ms", now.elapsed().as_millis());
-            now = Instant::now();
         }
 
-        let foo = glium::VertexBuffer::new(display, &vertices).unwrap();
-        println!("VertexBuffer {}ms", now.elapsed().as_millis());
-        now = Instant::now();
-        let foo2 = glium::IndexBuffer::new(
-            display,
-            glium::index::PrimitiveType::TrianglesList,
-            &indices,
+        (
+            glium::VertexBuffer::new(display, &vertices).unwrap(),
+            glium::IndexBuffer::new(
+                display,
+                glium::index::PrimitiveType::TrianglesList,
+                &indices,
+            )
+            .unwrap(),
         )
-        .unwrap();
-        println!("IndexBuffer  {}ms\n", now.elapsed().as_millis());
-
-        (foo, foo2)
     }
 
     pub fn add_shape(&mut self, shape: Shape) {
         if let (Some(ref mut vertices), Some(ref mut indices)) =
             (&mut self.vertices, &mut self.indices)
         {
-            let index_base = vertices.clone().len();
+            let index_base = vertices.len();
             vertices.extend(shape.vertices.clone());
             indices.extend(shape.indices.iter().map(|index| *index + index_base as u32));
         }

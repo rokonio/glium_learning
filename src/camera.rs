@@ -100,8 +100,8 @@ impl Camera {
         match direction {
             Direction::Forward => self.camera_pos += self.velocity * self.camera_front,
             Direction::Backward => self.camera_pos -= self.velocity * self.camera_front,
-            Direction::Down => y_at_start -= 0.1,
-            Direction::Up => y_at_start += 0.1,
+            Direction::Down => y_at_start -= self.velocity,
+            Direction::Up => y_at_start += self.velocity,
             Direction::Right => {
                 self.camera_pos +=
                     glm::normalize(&glm::cross(&self.camera_front, &glm::vec3(0f32, 1., 0.)))

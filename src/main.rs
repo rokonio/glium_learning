@@ -23,12 +23,14 @@ fn main() {
         &display,
     );
 
-    let mut world = setup::shapes();
+    let mut world = setup::world();
 
     let (mut vertex_buffer, mut index_buffer) = world.vertices_and_indices(&display);
     let program = setup::program(display.clone());
 
     let mut add_block_indice = 0;
+
+    world.camera.turn((0., 0.));
 
     event_loop.run(move |event, _, control_flow| {
 
@@ -52,20 +54,20 @@ fn main() {
                     1 => *control_flow = glutin::event_loop::ControlFlow::Exit, // escape
 
                     16 => {
-        world.add_shape(setup::cube(
-            glm::vec3(
-                (add_block_indice % 15 + 16) as f32,
-                (add_block_indice / 15 + 16) as f32,
-                2.,
-            ),
-            (2., 41.),
-            (24., 42.),
-        ));
-        let foo = world.vertices_and_indices(&display);
-        vertex_buffer = foo.0;
-        index_buffer = foo.1;
-        add_block_indice += 1;
-    },
+                        world.add_shape(setup::cube(
+                            glm::vec3(
+                                (-add_block_indice % 15) as f32,
+                                (add_block_indice / 15) as f32,
+                                2.,
+                            ),
+                            (2., 41.),
+                            (24., 42.),
+                        ));
+                        let foo = world.vertices_and_indices(&display);
+                        vertex_buffer = foo.0;
+                        index_buffer = foo.1;
+                        add_block_indice += 1;
+                    }
                     _ => (),
                 }
             }
