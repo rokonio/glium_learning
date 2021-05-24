@@ -30,19 +30,21 @@ pub fn shapes() -> World {
         -90.,                   // Head x-axis position
     ));
 
-    for i in -5..5 {
-        for j in -5..5 {
-            let block;
-            if (i + j) % 2 == 0 {
-                block = stone;
-            } else {
-                block = cobble_stone;
+    for i in 0..16 {
+        for j in 0..16 {
+            for k in 0..256 {
+                let block;
+                if (i + j) % 2 == 0 {
+                    block = stone;
+                } else {
+                    block = cobble_stone;
+                }
+                world.add_shape(cube(
+                    glm::vec3(i as f32, k as f32, j as f32),
+                    block,
+                    (width, height),
+                ));
             }
-            world.add_shape(cube(
-                glm::vec3(i as f32, -1., j as f32),
-                block,
-                (width, height),
-            ));
         }
     }
 
