@@ -23,18 +23,10 @@ fn main() {
         &display,
     );
 
-    let shape = setup::shapes();
+    let mut world = setup::shapes();
 
-    let (vertex_buffer, indices) = shape.indices_and_vertices(&display);
+    let (vertex_buffer, indices) = world.indices_and_vertices(&display);
     let program = setup::program(display.clone());
-
-    let mut camera = Camera::new(
-        0.2,                    // Velocity
-        0.4,                    // Sensitivity
-        glm::vec3(0., 1.8, 0.), // Position
-        0.,                     // Head y-axis position
-        -90.,                   // Head x-axis position
-    );
 
     event_loop.run(move |event, _, control_flow| {
 
@@ -44,16 +36,16 @@ fn main() {
             }
         } else if let glutin::event::Event::DeviceEvent { event, ..} = event {
             if let glutin::event::DeviceEvent::MouseMotion {delta} = event {
-                camera.turn((delta.0 as f32, delta.1 as f32));
+                world.camera.turn((delta.0 as f32, delta.1 as f32));
             }
             if let glutin::event::DeviceEvent::Key(input) = event {
                 match input.scancode {
-                    17 => camera.move_front(),  // 'z' on azerty
-                    31 => camera.move_back(), // s 
-                    42 => camera.move_down(), // Shift
-                    57 => camera.move_up(), // Space
-                    32 => camera.move_right(), // d
-                    30 => camera.move_left(), // q
+                    17 => world.camera.move_front(),  // 'z' on azerty
+                    31 => world.camera.move_back(), // s 
+                    42 => world.camera.move_down(), // Shift
+                    57 => world.camera.move_up(), // Space
+                    32 => world.camera.move_right(), // d
+                    30 => world.camera.move_left(), // q
 
                     1 => *control_flow = glutin::event_loop::ControlFlow::Exit, // escape
                     _ => (),
@@ -67,7 +59,7 @@ fn main() {
             let model = glm::identity::<f32, 4>();
             let model: [[f32; 4]; 4] = model.into();
 
-            let view = glm::look_at(&camera.camera_pos, &(camera.camera_pos + camera.camera_front), &glm::vec3(0f32, 1., 0.));
+            let view = glm::look_at(&world.camera.camera_pos, &(world.camera.camera_pos + world.camera.camera_front), &glm::vec3(0f32, 1., 0.));
             let view: [[f32; 4]; 4] = view.into();
 
             let (width, height) = target.get_dimensions();

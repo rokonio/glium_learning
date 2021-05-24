@@ -1,3 +1,4 @@
+use super::camera::Camera;
 use super::world::*;
 use glium;
 use std::io::Cursor;
@@ -12,7 +13,7 @@ pub fn texture(path: &[u8], display: &glium::Display) -> glium::texture::Texture
     glium::texture::Texture2d::new(display, image).unwrap()
 }
 
-pub fn shapes() -> Shape {
+pub fn shapes() -> World {
     let width = 24f32;
     let height = 42f32;
 
@@ -21,7 +22,13 @@ pub fn shapes() -> Shape {
     let grass = (0f32, 41f32);
     let oak_plank = (4f32, 40f32);
 
-    let mut shape = Shape::new();
+    let mut world = World::from_camera(Camera::new(
+        0.2,                    // Velocity
+        0.4,                    // Sensitivity
+        glm::vec3(0., 1.8, 0.), // Position
+        0.,                     // Head y-axis position
+        -90.,                   // Head x-axis position
+    ));
 
     for i in -5..5 {
         for j in -5..5 {
@@ -31,7 +38,7 @@ pub fn shapes() -> Shape {
             } else {
                 block = cobble_stone;
             }
-            shape.add_shape(cube(
+            world.add_shape(cube(
                 glm::vec3(i as f32, -1., j as f32),
                 block,
                 (width, height),
@@ -39,9 +46,9 @@ pub fn shapes() -> Shape {
         }
     }
 
-    shape.add_shape(cube(glm::vec3(0., 0., 0.), grass, (width, height)));
-    shape.add_shape(cube(glm::vec3(1., 1., 1.), oak_plank, (width, height)));
-    shape
+    world.add_shape(cube(glm::vec3(0., 0., 0.), grass, (width, height)));
+    world.add_shape(cube(glm::vec3(1., 1., 1.), oak_plank, (width, height)));
+    world
 }
 
 pub fn cube(position: glm::Vec3, tex_coords: (f32, f32), tex_size: (f32, f32)) -> Shape {

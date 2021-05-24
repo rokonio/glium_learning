@@ -9,6 +9,7 @@ pub enum Direction {
     Down,
 }
 
+#[derive(Debug)]
 pub struct Camera {
     pub velocity: f32,
     pub sensitivity: f32,
