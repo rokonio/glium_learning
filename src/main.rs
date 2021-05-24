@@ -25,7 +25,7 @@ fn main() {
 
     let mut world = setup::shapes();
 
-    let (vertex_buffer, indices) = world.indices_and_vertices(&display);
+    let (mut vertex_buffer, mut index_buffer) = world.vertices_and_indices(&display);
     let program = setup::program(display.clone());
 
     event_loop.run(move |event, _, control_flow| {
@@ -72,7 +72,7 @@ fn main() {
             target
                 .draw(
                     &vertex_buffer,
-                    &indices,
+                    &index_buffer,
                     &program,
                     &uniform! {model: model, view: view, projection: projection, tex: glium::uniforms::Sampler::new(&texture)
                     .magnify_filter(glium::uniforms::MagnifySamplerFilter::Nearest)},

@@ -42,35 +42,16 @@ impl Shape {
             indices: vec![],
         }
     }
-
-    pub fn add_vertices(&mut self, vertices: Vec<Vertex>, indices: Vec<u32>) {
-        let index_base = self.vertices.len();
-        self.vertices.extend(vertices);
-        self.indices
-            .extend(indices.iter().map(|i| *i + index_base as u32));
-    }
-
-    pub fn add_shape(&mut self, shape: Shape) {
-        self.add_vertices(shape.vertices, shape.indices);
-    }
-
-    pub fn indices_and_vertices(
-        &self,
-        display: &glium::Display,
-    ) -> (glium::VertexBuffer<Vertex>, glium::IndexBuffer<u32>) {
-        (
-            glium::VertexBuffer::new(display, &self.vertices).unwrap(),
-            glium::IndexBuffer::new(
-                display,
-                glium::index::PrimitiveType::TrianglesList,
-                &self.indices,
-            )
-            .unwrap(),
-        )
-    }
 }
 
+#[allow(unused)]
 impl World {
+    pub fn empty() -> World {
+        World {
+            shapes: vec![],
+            camera: Camera::new(0.2, 0.4, glm::vec3(0., 0., 0.), 0., 0.),
+        }
+    }
     pub fn from_camera(camera: Camera) -> World {
         World {
             shapes: vec![],
@@ -78,7 +59,7 @@ impl World {
         }
     }
 
-    pub fn indices_and_vertices(
+    pub fn vertices_and_indices(
         &self,
         display: &glium::Display,
     ) -> (glium::VertexBuffer<Vertex>, glium::IndexBuffer<u32>) {
