@@ -1,8 +1,6 @@
 use super::camera::Camera;
 use super::world::*;
 
-use glium;
-
 use std::io::Cursor;
 
 pub fn texture(path: &[u8], display: &glium::Display) -> glium::texture::Texture2d {

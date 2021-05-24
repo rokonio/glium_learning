@@ -129,5 +129,5 @@ impl World {
 }
 
 pub fn degree_to_radian(degree: f32) -> f32 {
-    degree * (3.1415 / 180.)
+    degree * (std::f32::consts::PI / 180.)
 }

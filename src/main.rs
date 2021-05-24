@@ -63,9 +63,9 @@ fn main() {
                             (2., 41.),
                             (24., 42.),
                         ));
-                        let foo = world.vertices_and_indices(&display);
-                        vertex_buffer = foo.0;
-                        index_buffer = foo.1;
+                        let temp = world.vertices_and_indices(&display);
+                        vertex_buffer = temp.0;
+                        index_buffer = temp.1;
                         add_block_indice += 1;
                     }
                     _ => (),
