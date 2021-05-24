@@ -75,10 +75,21 @@ impl World {
         let mut indices: Vec<_>;
         let mut now = Instant::now();
         if let (Some(v), Some(i)) = (self.vertices.as_ref(), self.indices.as_ref()) {
-            vertices = v.to_vec();
-            indices = i.to_vec();
-            println!("No operation {}ms", now.elapsed().as_millis());
+            let foo = glium::VertexBuffer::new(display, &v).unwrap();
+            println!(
+                "VertexBuffer (no computation) {}ms",
+                now.elapsed().as_millis()
+            );
             now = Instant::now();
+            let foo2 =
+                glium::IndexBuffer::new(display, glium::index::PrimitiveType::TrianglesList, &i)
+                    .unwrap();
+            println!(
+                "IndexBuffer (no computation) {}ms\n",
+                now.elapsed().as_millis()
+            );
+
+            return (foo, foo2);
         } else {
             vertices = Vec::with_capacity(
                 self.shapes
@@ -111,13 +122,15 @@ impl World {
         }
 
         let foo = glium::VertexBuffer::new(display, &vertices).unwrap();
+        println!("VertexBuffer {}ms", now.elapsed().as_millis());
+        now = Instant::now();
         let foo2 = glium::IndexBuffer::new(
             display,
             glium::index::PrimitiveType::TrianglesList,
             &indices,
         )
         .unwrap();
-        println!("To buffers   {}ms\n", now.elapsed().as_millis());
+        println!("IndexBuffer  {}ms\n", now.elapsed().as_millis());
 
         (foo, foo2)
     }
