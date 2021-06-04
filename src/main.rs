@@ -7,9 +7,11 @@ use glium::glutin::{self, event_loop::EventLoop, window::WindowBuilder, ContextB
 use glium::Surface;
 
 mod camera;
+mod keyboard_handler;
 mod setup;
 mod world;
 use camera::*;
+use keyboard_handler::*;
 use world::*;
 
 fn main() {
@@ -22,6 +24,8 @@ fn main() {
         include_bytes!("../assets/textures/minecraft_tex.png"),
         &display,
     );
+
+    let mut keyboard_handler = KeyboardHandler::new();
 
     let mut world = setup::world();
 
@@ -43,7 +47,8 @@ fn main() {
                 world.camera.turn((delta.0 as f32, delta.1 as f32));
             }
             if let glutin::event::DeviceEvent::Key(input) = event {
-                match input.scancode {
+                keyboard_handler.process_input(input.scancode);
+                keyboard_handler.process_with(|scancode| match scancode {
                     17 => world.camera.move_front(),  // 'z' on azerty
                     31 => world.camera.move_back(), // s 
                     42 => world.camera.move_down(), // Shift
@@ -69,10 +74,9 @@ fn main() {
                         add_block_indice += 1;
                     }
                     _ => (),
-                }
+                })
             }
         } else if let glutin::event::Event::MainEventsCleared = event {
-            // Render code moved here
 
             let mut target = display.draw();
 
