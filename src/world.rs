@@ -74,9 +74,13 @@ impl World {
 
         if let (Some(v), Some(i)) = (self.vertices.as_ref(), self.indices.as_ref()) {
             return (
-                glium::VertexBuffer::new(display, &v).unwrap(),
-                glium::IndexBuffer::new(display, glium::index::PrimitiveType::TrianglesList, &i)
-                    .unwrap(),
+                glium::VertexBuffer::persistent(display, &v).unwrap(),
+                glium::IndexBuffer::persistent(
+                    display,
+                    glium::index::PrimitiveType::TrianglesList,
+                    &i,
+                )
+                .unwrap(),
             );
         } else {
             vertices = Vec::with_capacity(
@@ -106,8 +110,8 @@ impl World {
         }
 
         (
-            glium::VertexBuffer::new(display, &vertices).unwrap(),
-            glium::IndexBuffer::new(
+            glium::VertexBuffer::persistent(display, &vertices).unwrap(),
+            glium::IndexBuffer::persistent(
                 display,
                 glium::index::PrimitiveType::TrianglesList,
                 &indices,

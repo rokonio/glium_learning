@@ -26,8 +26,8 @@ impl Camera {
         Camera {
             velocity,
             sensitivity,
-            camera_pos: glm::vec3(0f32, 0., 0.),
-            camera_front: glm::vec3(0f32, 0., -1.),
+            camera_pos: glm::vec3(0., 0., 0.),
+            camera_front: glm::vec3(0., 0., -1.),
             pitch: 0.,
             yaw: -90.,
         }
@@ -96,12 +96,15 @@ impl Camera {
     }
 
     fn move_to(&mut self, direction: Direction) {
-        let mut y_at_start = self.camera_pos.y;
+        // let mut y_at_start = 0.;
+        let cam = self.camera_front;
+        self.camera_front.y = 0.;
+        self.camera_front = glm::normalize(&self.camera_front);
         match direction {
             Direction::Forward => self.camera_pos += self.velocity * self.camera_front,
             Direction::Backward => self.camera_pos -= self.velocity * self.camera_front,
-            Direction::Down => y_at_start -= self.velocity,
-            Direction::Up => y_at_start += self.velocity,
+            Direction::Down => self.camera_pos.y -= self.velocity,
+            Direction::Up => self.camera_pos.y += self.velocity,
             Direction::Right => {
                 self.camera_pos +=
                     glm::normalize(&glm::cross(&self.camera_front, &glm::vec3(0f32, 1., 0.)))
@@ -113,6 +116,7 @@ impl Camera {
                         * self.velocity
             }
         }
-        self.camera_pos.y = y_at_start;
+        self.camera_front = cam;
+        // self.camera_pos.y += y_at_start;
     }
 }
