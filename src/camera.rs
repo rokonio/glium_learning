@@ -96,27 +96,21 @@ impl Camera {
     }
 
     fn move_to(&mut self, direction: Direction) {
-        // let mut y_at_start = 0.;
-        let cam = self.camera_front;
-        self.camera_front.y = 0.;
-        self.camera_front = glm::normalize(&self.camera_front);
+        let mut front = glm::vec3(self.camera_front.x, 0., self.camera_front.z);
+        front = glm::normalize(&front);
         match direction {
-            Direction::Forward => self.camera_pos += self.velocity * self.camera_front,
-            Direction::Backward => self.camera_pos -= self.velocity * self.camera_front,
+            Direction::Forward => self.camera_pos += self.velocity * front,
+            Direction::Backward => self.camera_pos -= self.velocity * front,
             Direction::Down => self.camera_pos.y -= self.velocity,
             Direction::Up => self.camera_pos.y += self.velocity,
             Direction::Right => {
                 self.camera_pos +=
-                    glm::normalize(&glm::cross(&self.camera_front, &glm::vec3(0f32, 1., 0.)))
-                        * self.velocity
+                    glm::normalize(&glm::cross(&front, &glm::vec3(0f32, 1., 0.))) * self.velocity
             }
             Direction::Left => {
                 self.camera_pos -=
-                    glm::normalize(&glm::cross(&self.camera_front, &glm::vec3(0f32, 1., 0.)))
-                        * self.velocity
+                    glm::normalize(&glm::cross(&front, &glm::vec3(0f32, 1., 0.))) * self.velocity
             }
         }
-        self.camera_front = cam;
-        // self.camera_pos.y += y_at_start;
     }
 }
