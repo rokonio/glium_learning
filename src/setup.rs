@@ -23,7 +23,7 @@ pub fn world() -> World {
     let oak_plank = (4f32, 40f32);
 
     let mut world = World::from_camera(Camera::new(
-        0.4,                      // Velocity
+        0.05,                     // Velocity
         0.4,                      // Sensitivity
         glm::vec3(-0.5, 3., -5.), // Position
         0.,                       // Head x-axis position

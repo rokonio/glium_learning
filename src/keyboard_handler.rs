@@ -1,16 +1,17 @@
 use std::collections::HashSet;
 
+#[derive(Debug)]
 pub struct KeyboardHandler {
     pub key_pool: HashSet<u32>,
 }
 
 impl KeyboardHandler {
-    pub fn process_input(&mut self, input: u32) {
-        if self.key_pool.contains(&input) {
-            self.key_pool.remove(&input);
-        } else {
-            self.key_pool.insert(input);
-        }
+    pub fn process_press(&mut self, input: u32) {
+        self.key_pool.insert(input);
+    }
+
+    pub fn process_release(&mut self, input: u32) {
+        self.key_pool.remove(&input);
     }
 
     pub fn process_with<T>(&self, mut processor: T)

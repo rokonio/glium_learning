@@ -47,36 +47,40 @@ fn main() {
                 world.camera.turn((delta.0 as f32, delta.1 as f32));
             }
             if let glutin::event::DeviceEvent::Key(input) = event {
-                keyboard_handler.process_input(input.scancode);
-                keyboard_handler.process_with(|scancode| match scancode {
-                    17 => world.camera.move_front(),  // 'z' on azerty
-                    31 => world.camera.move_back(), // s 
-                    42 => world.camera.move_down(), // Shift
-                    57 => world.camera.move_up(), // Space
-                    32 => world.camera.move_right(), // d
-                    30 => world.camera.move_left(), // q
-
-                    1 => *control_flow = glutin::event_loop::ControlFlow::Exit, // escape
-
-                    16 => {
-                        world.add_shape(setup::cube(
-                            glm::vec3(
-                                (-add_block_indice % 15) as f32,
-                                (add_block_indice / 15) as f32,
-                                2.,
-                            ),
-                            (2., 41.),
-                            (24., 42.),
-                        ));
-                        let temp = world.vertices_and_indices(&display);
-                        vertex_buffer = temp.0;
-                        index_buffer = temp.1;
-                        add_block_indice += 1;
-                    }
-                    _ => (),
-                })
+                match input.state {
+                    glutin::event::ElementState::Pressed => keyboard_handler.process_press(input.scancode),
+                    glutin::event::ElementState::Released => keyboard_handler.process_release(input.scancode),
+                }
             }
         } else if let glutin::event::Event::MainEventsCleared = event {
+
+            keyboard_handler.process_with(|scancode| match scancode {
+                17 => world.camera.move_front(), // 'z' on azerty
+                31 => world.camera.move_back(),  // s
+                42 => world.camera.move_down(),  // Shift
+                57 => world.camera.move_up(),    // Space
+                32 => world.camera.move_right(), // d
+                30 => world.camera.move_left(),  // q
+
+                1 => *control_flow = glutin::event_loop::ControlFlow::Exit, // escape
+
+                16 => {
+                    world.add_shape(setup::cube(
+                        glm::vec3(
+                            (-add_block_indice % 15) as f32,
+                            (add_block_indice / 15) as f32,
+                            2.,
+                        ),
+                        (2., 41.),
+                        (24., 42.),
+                    ));
+                    let temp = world.vertices_and_indices(&display);
+                    vertex_buffer = temp.0;
+                    index_buffer = temp.1;
+                    add_block_indice += 1;
+                }
+                _ => (),
+            });
 
             let mut target = display.draw();
 
