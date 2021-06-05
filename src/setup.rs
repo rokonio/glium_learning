@@ -1,4 +1,5 @@
 use super::camera::Camera;
+use super::teapot::*;
 use super::world::*;
 
 use std::io::Cursor;
@@ -48,6 +49,7 @@ pub fn world() -> World {
             }
         }
     }
+    world.add_shape(teapot());
     world
 }
 
@@ -56,35 +58,35 @@ pub fn cube(position: glm::Vec3, tex_coords: (f32, f32), tex_size: (f32, f32)) -
 
     let cube_vertices = [
         // front
-        (-1.0, -1.0, 1.0),
-        (1.0, -1.0, 1.0),
-        (1.0, 1.0, 1.0),
         (-1.0, 1.0, 1.0),
+        (1.0, 1.0, 1.0),
+        (1.0, -1.0, 1.0),
+        (-1.0, -1.0, 1.0),
         // top
-        (-1.0, 1.0, 1.0),
-        (1.0, 1.0, 1.0),
-        (1.0, 1.0, -1.0),
         (-1.0, 1.0, -1.0),
+        (1.0, 1.0, -1.0),
+        (1.0, 1.0, 1.0),
+        (-1.0, 1.0, 1.0),
         // back
-        (1.0, -1.0, -1.0),
-        (-1.0, -1.0, -1.0),
-        (-1.0, 1.0, -1.0),
         (1.0, 1.0, -1.0),
+        (-1.0, 1.0, -1.0),
+        (-1.0, -1.0, -1.0),
+        (1.0, -1.0, -1.0),
         // bottom
-        (-1.0, -1.0, -1.0),
-        (1.0, -1.0, -1.0),
-        (1.0, -1.0, 1.0),
         (-1.0, -1.0, 1.0),
+        (1.0, -1.0, 1.0),
+        (1.0, -1.0, -1.0),
+        (-1.0, -1.0, -1.0),
         // left
-        (-1.0, -1.0, -1.0),
-        (-1.0, -1.0, 1.0),
-        (-1.0, 1.0, 1.0),
         (-1.0, 1.0, -1.0),
+        (-1.0, 1.0, 1.0),
+        (-1.0, -1.0, 1.0),
+        (-1.0, -1.0, -1.0),
         // right
-        (1.0, -1.0, 1.0),
-        (1.0, -1.0, -1.0),
-        (1.0, 1.0, -1.0),
         (1.0, 1.0, 1.0),
+        (1.0, 1.0, -1.0),
+        (1.0, -1.0, -1.0),
+        (1.0, -1.0, 1.0),
     ];
 
     let cube_texcoords = [
@@ -159,7 +161,7 @@ pub fn draw_param() -> glium::DrawParameters<'static> {
             write: true,
             ..Default::default()
         },
-        backface_culling: glium::draw_parameters::BackfaceCullingMode::CullClockwise,
+        backface_culling: glium::BackfaceCullingMode::CullCounterClockwise,
         ..Default::default()
     }
 }

@@ -9,6 +9,8 @@ use glium::Surface;
 mod camera;
 mod keyboard_handler;
 mod setup;
+#[path = "../assets/models/teapot.rs"]
+mod teapot;
 mod world;
 use camera::*;
 use keyboard_handler::*;
