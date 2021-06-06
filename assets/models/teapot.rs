@@ -698,9 +698,14 @@ pub fn teapot() -> Shape {
     for i in 0..531 {
         let vertex = VERTICES[i];
         vertices.push(Vertex::new(
-            [vertex.0 / 100., vertex.1 / 100. + 1.5, vertex.2 / 100. - 2.],
-            [0.001 * i as f32, 0.001 * i as f32],
+            [vertex.0, vertex.1, vertex.2],
+            [0.001 * i as f32, 0.02],
         ));
     }
-    Shape::from_vertices(vertices, INDICES[..].to_owned())
+    let mut out = Shape::from_vertices(vertices, INDICES[..].to_owned());
+    let transform = glm::translate(&glm::Mat4::identity(), &glm::vec3(-2., 2., -2.));
+    let transform = glm::scale(&transform, &glm::vec3(0.01, 0.01, 0.01));
+    println!("{:?}", transform);
+    out.transform(transform);
+    out
 }

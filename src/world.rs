@@ -44,6 +44,19 @@ impl Shape {
             indices: vec![],
         }
     }
+
+    pub fn transform(&mut self, transform: glm::Mat4) {
+        for mut vertex in &mut self.vertices {
+            let as_vertex = glm::vec4(
+                vertex.position[0],
+                vertex.position[1],
+                vertex.position[2],
+                1.,
+            );
+            let out = transform * as_vertex;
+            vertex.position = [out.x, out.y, out.z];
+        }
+    }
 }
 
 #[allow(unused)]
@@ -129,6 +142,11 @@ impl World {
             indices.extend(shape.indices.iter().map(|index| *index + index_base as u32));
         }
         self.shapes.push(shape);
+    }
+
+    pub fn reset(&mut self) {
+        self.vertices = None;
+        self.indices = None;
     }
 }
 
